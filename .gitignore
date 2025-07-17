@@ -1,0 +1,9 @@
+.dart_tool/
+.packages
+.pub/
+build/
+flutter_*.png
+generated_plugin_registrant.dart
+.idea/
+.android/
+.ios/
