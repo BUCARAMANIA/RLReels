@@ -4,4 +4,4 @@
 
 ...
 
-**“You don’t need a restaurant to make restaurant money.” – Restalaunch**
+**“Hungry? Discover new cuisine. Cooking? Grow your fanbase.” – Restalaunch**
