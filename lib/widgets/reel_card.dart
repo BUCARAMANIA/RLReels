@@ -5,7 +5,10 @@ import '../models/reel.dart';
 class ReelCard extends StatefulWidget {
   final Reel reel;
 
-  const ReelCard({super.key, required this.reel});
+  const ReelCard({
+    super.key,
+    required this.reel,
+  });
 
   @override
   State<ReelCard> createState() => _ReelCardState();
@@ -15,7 +18,7 @@ class _ReelCardState extends State<ReelCard> {
   late VideoPlayerController _controller;
   bool _isPlaying = true;
   bool _isLiked = false;
-  bool _isSaved = false;
+  int _likeCount = 0;
 
   @override
   void initState() {
@@ -36,33 +39,21 @@ class _ReelCardState extends State<ReelCard> {
 
   void _togglePlayPause() {
     setState(() {
-      _isPlaying ? _controller.pause() : _controller.play();
-      _isPlaying = !_isPlaying;
+      if (_controller.value.isPlaying) {
+        _controller.pause();
+        _isPlaying = false;
+      } else {
+        _controller.play();
+        _isPlaying = true;
+      }
     });
   }
 
   void _toggleLike() {
     setState(() {
       _isLiked = !_isLiked;
+      _likeCount += _isLiked ? 1 : -1;
     });
-  }
-
-  void _toggleSave() {
-    setState(() {
-      _isSaved = !_isSaved;
-    });
-  }
-
-  void _showComments() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Open comments section")),
-    );
-  }
-
-  void _shareReel() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Reel link copied to clipboard")),
-    );
   }
 
   @override
@@ -77,13 +68,12 @@ class _ReelCardState extends State<ReelCard> {
                     aspectRatio: _controller.value.aspectRatio,
                     child: VideoPlayer(_controller),
                   )
-                : const Center(child: CircularProgressIndicator()),
+                : const CircularProgressIndicator(),
           ),
-          // Vendor & caption
           Positioned(
             bottom: 40,
             left: 20,
-            right: 80,
+            right: 20,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -91,8 +81,7 @@ class _ReelCardState extends State<ReelCard> {
                   children: [
                     CircleAvatar(
                       radius: 16,
-                      backgroundImage:
-                          NetworkImage(widget.reel.vendorImageUrl),
+                      backgroundImage: NetworkImage(widget.reel.vendorImageUrl),
                     ),
                     const SizedBox(width: 10),
                     Text(
@@ -100,7 +89,9 @@ class _ReelCardState extends State<ReelCard> {
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+                        shadows: [
+                          Shadow(color: Colors.black, blurRadius: 4),
+                        ],
                       ),
                     ),
                   ],
@@ -121,59 +112,30 @@ class _ReelCardState extends State<ReelCard> {
                     ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          // Action icons
-          Positioned(
-            bottom: 40,
-            right: 20,
-            child: Column(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    _isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: _isLiked ? Colors.red : Colors.white,
-                    size: 28,
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          _isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: _isLiked ? Colors.red : Colors.white,
+                        ),
+                        onPressed: _toggleLike,
+                      ),
+                      Text(
+                        '$_likeCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+                        ),
+                      ),
+                    ],
                   ),
-                  onPressed: _toggleLike,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.comment, color: Colors.white),
-                  onPressed: _showComments,
-                ),
-                IconButton(
-                  icon: Icon(
-                    _isSaved ? Icons.bookmark : Icons.bookmark_outline,
-                    color: Colors.white,
-                  ),
-                  onPressed: _toggleSave,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.share, color: Colors.white),
-                  onPressed: _shareReel,
                 ),
               ],
-            ),
-          ),
-          // CTA
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              color: Colors.orange,
-              child: const Center(
-                child: Text(
-                  'Order Now',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
             ),
           ),
         ],

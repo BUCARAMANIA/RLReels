@@ -1,20 +1,43 @@
 import 'package:flutter/material.dart';
-import '../models/reel.dart';
-import '../widgets/reel_card.dart';
 import '../data/sample_reels.dart';
+import '../widgets/reel_card.dart';
 
-class FeedScreen extends StatelessWidget {
-  const FeedScreen({super.key});
+class FeedScreen extends StatefulWidget {
+  final int initialIndex;
+
+  const FeedScreen({super.key, required this.initialIndex});
+
+  @override
+  State<FeedScreen> createState() => _FeedScreenState();
+}
+
+class _FeedScreenState extends State<FeedScreen> {
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-      scrollDirection: Axis.vertical,
-      itemCount: sampleReels.length,
-      itemBuilder: (context, index) {
-        final Reel reel = sampleReels[index];
-        return ReelCard(reel: reel);
-      },
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: PageView.builder(
+        controller: _pageController,
+        scrollDirection: Axis.vertical,
+        itemCount: sampleReels.length,
+        itemBuilder: (context, index) {
+          return ReelCard(reel: sampleReels[index]);
+        },
+      ),
     );
   }
 }
