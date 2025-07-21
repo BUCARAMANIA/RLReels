@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../models/reel.dart';
+import '../data/sample_reels.dart';
+import '../screens/vendor_profile_screen.dart';
+import '../screens/vendor_menu_screen.dart';
 
 class ReelCard extends StatefulWidget {
   final Reel reel;
@@ -62,7 +65,7 @@ class _ReelCardState extends State<ReelCard> {
                 )
               : const Center(child: CircularProgressIndicator()),
 
-          // Gradient for readability
+          // Gradient overlay
           Positioned.fill(
             child: Container(
               decoration: const BoxDecoration(
@@ -80,39 +83,53 @@ class _ReelCardState extends State<ReelCard> {
             left: 16,
             bottom: 32,
             right: 100,
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(widget.reel.vendorImageUrl),
-                  radius: 20,
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '@${widget.reel.vendorUsername}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          shadows: [Shadow(color: Colors.black, blurRadius: 4)],
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        widget.reel.caption,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          shadows: [Shadow(color: Colors.black, blurRadius: 4)],
-                        ),
-                      ),
-                    ],
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => VendorProfileScreen(
+                      vendorUsername: widget.reel.vendorUsername,
+                      vendorImageUrl: widget.reel.vendorImageUrl,
+                      allReels: sampleReels,
+                    ),
                   ),
-                ),
-              ],
+                );
+              },
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(widget.reel.vendorImageUrl),
+                    radius: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '@${widget.reel.vendorUsername}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          widget.reel.caption,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -122,7 +139,21 @@ class _ReelCardState extends State<ReelCard> {
             bottom: 32,
             child: Column(
               children: [
-                _buildActionIcon(Icons.restaurant, 'Order'),
+                // Order Button with Navigation
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => VendorMenuScreen(
+                          vendorUsername: widget.reel.vendorUsername,
+                          vendorImageUrl: widget.reel.vendorImageUrl,
+                        ),
+                      ),
+                    );
+                  },
+                  child: _buildActionIcon(Icons.restaurant, 'Order'),
+                ),
                 const SizedBox(height: 16),
                 _buildActionIcon(Icons.menu_book, 'Menu'),
                 const SizedBox(height: 16),

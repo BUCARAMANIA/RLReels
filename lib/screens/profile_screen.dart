@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'vendor_dashboard_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -38,6 +39,29 @@ class ProfileScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
+
+            // 🚀 Vendor Dashboard Access Button
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const VendorDashboardScreen(
+                      vendorUsername: 'taco_truck_sf',
+                    ),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.dashboard),
+              label: const Text('Go to My Vendor Dashboard'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orangeAccent,
+                foregroundColor: Colors.black,
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
