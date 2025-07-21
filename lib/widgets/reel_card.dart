@@ -5,10 +5,7 @@ import '../models/reel.dart';
 class ReelCard extends StatefulWidget {
   final Reel reel;
 
-  const ReelCard({
-    super.key,
-    required this.reel,
-  });
+  const ReelCard({super.key, required this.reel});
 
   @override
   State<ReelCard> createState() => _ReelCardState();
@@ -16,9 +13,7 @@ class ReelCard extends StatefulWidget {
 
 class _ReelCardState extends State<ReelCard> {
   late VideoPlayerController _controller;
-  bool _isPlaying = true;
-  bool _isLiked = false;
-  int _likeCount = 0;
+  bool _isPlaying = false;
 
   @override
   void initState() {
@@ -27,7 +22,7 @@ class _ReelCardState extends State<ReelCard> {
       ..initialize().then((_) {
         setState(() {});
         _controller.play();
-        _controller.setLooping(true);
+        _isPlaying = true;
       });
   }
 
@@ -37,7 +32,7 @@ class _ReelCardState extends State<ReelCard> {
     super.dispose();
   }
 
-  void _togglePlayPause() {
+  void _togglePlayback() {
     setState(() {
       if (_controller.value.isPlaying) {
         _controller.pause();
@@ -49,86 +44,68 @@ class _ReelCardState extends State<ReelCard> {
     });
   }
 
-  void _toggleLike() {
-    setState(() {
-      _isLiked = !_isLiked;
-      _likeCount += _isLiked ? 1 : -1;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: _togglePlayPause,
+      onTap: _togglePlayback,
       child: Stack(
+        fit: StackFit.expand,
         children: [
-          Center(
-            child: _controller.value.isInitialized
-                ? AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
+          _controller.value.isInitialized
+              ? FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: _controller.value.size.width,
+                    height: _controller.value.size.height,
                     child: VideoPlayer(_controller),
-                  )
-                : const CircularProgressIndicator(),
-          ),
-          Positioned(
-            bottom: 40,
-            left: 20,
-            right: 20,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundImage: NetworkImage(widget.reel.vendorImageUrl),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      '@${widget.reel.vendorUsername}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(color: Colors.black, blurRadius: 4),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  widget.reel.caption,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black,
-                        blurRadius: 6,
-                        offset: Offset(1, 1),
-                      ),
-                    ],
                   ),
+                )
+              : const Center(child: CircularProgressIndicator()),
+
+          // Gradient for readability
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.center,
+                  colors: [Colors.black54, Colors.transparent],
                 ),
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerRight,
+              ),
+            ),
+          ),
+
+          // Vendor Info + Caption
+          Positioned(
+            left: 16,
+            bottom: 32,
+            right: 100,
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(widget.reel.vendorImageUrl),
+                  radius: 20,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      IconButton(
-                        icon: Icon(
-                          _isLiked ? Icons.favorite : Icons.favorite_border,
-                          color: _isLiked ? Colors.red : Colors.white,
-                        ),
-                        onPressed: _toggleLike,
-                      ),
                       Text(
-                        '$_likeCount',
+                        '@${widget.reel.vendorUsername}',
                         style: const TextStyle(
                           color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.reel.caption,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
                           shadows: [Shadow(color: Colors.black, blurRadius: 4)],
                         ),
                       ),
@@ -138,8 +115,45 @@ class _ReelCardState extends State<ReelCard> {
               ],
             ),
           ),
+
+          // Action Buttons
+          Positioned(
+            right: 16,
+            bottom: 32,
+            child: Column(
+              children: [
+                _buildActionIcon(Icons.restaurant, 'Order'),
+                const SizedBox(height: 16),
+                _buildActionIcon(Icons.menu_book, 'Menu'),
+                const SizedBox(height: 16),
+                _buildActionIcon(Icons.favorite_border, 'Like'),
+                const SizedBox(height: 16),
+                _buildActionIcon(Icons.share, 'Share'),
+              ],
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildActionIcon(IconData icon, String label) {
+    return Column(
+      children: [
+        CircleAvatar(
+          backgroundColor: Colors.black54,
+          child: Icon(icon, color: Colors.white),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            shadows: [Shadow(color: Colors.black, blurRadius: 4)],
+          ),
+        ),
+      ],
     );
   }
 }

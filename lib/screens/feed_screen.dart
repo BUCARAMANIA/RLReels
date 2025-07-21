@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
-import '../data/sample_reels.dart';
+import '../models/reel.dart';
 import '../widgets/reel_card.dart';
 
 class FeedScreen extends StatefulWidget {
   final int initialIndex;
+  final List<Reel> reels;
 
-  const FeedScreen({super.key, required this.initialIndex});
+  const FeedScreen({
+    super.key,
+    required this.initialIndex,
+    required this.reels,
+  });
 
   @override
   State<FeedScreen> createState() => _FeedScreenState();
@@ -33,9 +38,9 @@ class _FeedScreenState extends State<FeedScreen> {
       body: PageView.builder(
         controller: _pageController,
         scrollDirection: Axis.vertical,
-        itemCount: sampleReels.length,
+        itemCount: widget.reels.length,
         itemBuilder: (context, index) {
-          return ReelCard(reel: sampleReels[index]);
+          return ReelCard(reel: widget.reels[index]);
         },
       ),
     );

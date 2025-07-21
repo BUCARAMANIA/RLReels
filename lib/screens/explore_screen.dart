@@ -26,7 +26,10 @@ class ExploreScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => FeedScreen(initialIndex: index),
+                  builder: (_) => FeedScreen(
+                    initialIndex: index,
+                    reels: sampleReels,
+                  ),
                 ),
               );
             },

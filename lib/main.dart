@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
+import 'data/sample_reels.dart';
 
 void main() {
   runApp(const RLReelsApp());
@@ -12,12 +13,9 @@ class RLReelsApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'RLReels',
+      theme: ThemeData.dark(),
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: Colors.black,
-      ),
-      home: const HomeScreen(),
+      home: HomeScreen(reels: sampleReels),
     );
   }
 }
-
